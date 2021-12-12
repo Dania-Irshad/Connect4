@@ -5,6 +5,7 @@
  * board fills (tie)
  */
 
+ const htmlBoard = document.getElementById('board');
 const WIDTH = 7;
 const HEIGHT = 6;
 
@@ -28,22 +29,24 @@ function makeBoard() {
 /** makeHtmlBoard: make HTML table and row of column tops. */
 
 function makeHtmlBoard() {
-  // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-  const htmlBoard = document.getElementById('board');
+  // get "htmlBoard" variable from the item in HTML w/ID of "board"
 
-  // TODO: add comment for this code
+  // create a top row element inside the table element and give it an ID of "column-top"
   const top = document.createElement("tr");
   top.setAttribute("id", "column-top");
   top.addEventListener("click", handleClick);
 
+  // use a loop to create and append column elements to the top row element and give it an ID of "x"
   for (let x = 0; x < WIDTH; x++) {
     const headCell = document.createElement("td");
     headCell.setAttribute("id", x);
     top.append(headCell);
   }
+  // append the top row to the table
   htmlBoard.append(top);
 
-  // TODO: add comment for this code
+  // use a loop to create "tr" (rows) and "td" (cells) elements and append them to the table
+  // give them an ID of the indexes
   for (let y = 0; y < HEIGHT; y++) {
     const row = document.createElement("tr");
     for (let x = 0; x < WIDTH; x++) {
@@ -55,17 +58,21 @@ function makeHtmlBoard() {
   }
 }
 
+// loop through array to check if every element is not null
+function isFilled(arr) {
+  for (let row of arr) {
+    return row.every(cell => cell !== null);
+  }
+}
+
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  const htmlBoard = document.getElementById('board');
-  const tds = htmlBoard.querySelectorAll('tr > td:first-child');
-  for (let i = tds.length - 1; i > 0; i--)
-  {
-    if (!(tds[i].firstChild))
-    {
-      return tds[i].id.slice(0, 1);
+  // loop through the elemnets of the board array. If element of array is null, return the row number.
+  // return null if element of array has a player number instead of null.
+  for (let y = HEIGHT - 1; y >= 0; y--) {
+    if (!board[y][x]) {
+      return y;
     }
   }
   return null;
@@ -90,8 +97,10 @@ function placeInTable(y, x) {
 /** endGame: announce game end */
 
 function endGame(msg) {
-  //alert('GAME HAS ENDED!');
-  // TODO: pop up alert message
+  alert(msg);
+  htmlBoard.innerHTML = "";
+  makeHtmlBoard();
+  makeBoard();
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -106,29 +115,21 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
+  // update in-memory board
   placeInTable(y, x);
   board[y][x] = currPlayer;
 
   // check for win
   if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
+    return endGame(`PLAYER ${currPlayer} WINS! GAME OVER`);
   }
 
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
-  function isNull(arr) {
-    for (let row of arr)
-    {
-      row.every(col => col === null);
-    }
-  }
-  if (!isNull) {
-    endGame();
+  // check for tie by checking if all cells in board are filled; if so, call endGame
+  if (isFilled(board)) {
+    endGame("ITS A TIE! GAME OVER");
   }
 
-  // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  // switch currPlayer 1 <-> 2
   currPlayer = currPlayer === 1 ? 2 : 1;
 }
 
@@ -150,9 +151,8 @@ function checkForWin() {
     );
   }
 
-  // TODO: read and understand this code. Add comments to help you.
-
-  for (let y = 0; y < HEIGHT; y++) {
+  // loop and create horizontal, vertical and diagnol arrays of four cells
+  for (let y = HEIGHT - 1; y >= 0; y--) {
     for (let x = 0; x < WIDTH; x++) {
       let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
       let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
