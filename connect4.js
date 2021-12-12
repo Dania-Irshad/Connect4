@@ -5,7 +5,7 @@
  * board fills (tie)
  */
 
- const htmlBoard = document.getElementById('board');
+const htmlBoard = document.getElementById('board');
 const WIDTH = 7;
 const HEIGHT = 6;
 
@@ -101,6 +101,7 @@ function endGame(msg) {
   htmlBoard.innerHTML = "";
   makeHtmlBoard();
   makeBoard();
+  currPlayer = 1;
 }
 
 /** handleClick: handle click of column top to play piece */
